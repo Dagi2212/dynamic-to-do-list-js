@@ -10,72 +10,38 @@ document.addEventListener('DOMContentLoaded', function () {
     updateTaskCounter();
 
     // Add Task function
-    function addTask(taskText, save = true, isCompleted = false) {
-        if (!taskText || taskText.trim() === '') {
-            alert('Please enter a task.');
-            return;
-        }
+ function addTask() {
+    const taskText = taskInput.value.trim();
 
-        // Check for duplicate tasks
-        if (isTaskExists(taskText)) {
-            alert('This task already exists!');
-            return;
-        }
-
-        const li = document.createElement('li');
-        li.className = isCompleted ? 'completed' : '';
-
-        // Create checkbox for task completion
-        const checkbox = document.createElement('input');
-        checkbox.type = 'checkbox';
-        checkbox.checked = isCompleted;
-        checkbox.addEventListener('change', function() {
-            li.classList.toggle('completed');
-            updateTaskInLocalStorage(taskText, li.classList.contains('completed'));
-        });
-
-        // Create task text span (for editing)
-        const taskSpan = document.createElement('span');
-        taskSpan.textContent = taskText;
-        taskSpan.className = 'task-text';
-        
-        // Enable editing on double-click
-        taskSpan.addEventListener('dblclick', function() {
-            const newText = prompt('Edit your task:', taskText);
-            if (newText && newText.trim() !== '' && newText !== taskText) {
-                if (!isTaskExists(newText)) {
-                    taskSpan.textContent = newText;
-                    updateTaskTextInLocalStorage(taskText, newText);
-                    taskText = newText;
-                } else {
-                    alert('This task already exists!');
-                }
-            }
-        });
-
-        // Create remove button
-        const removeBtn = document.createElement('button');
-        removeBtn.textContent = 'Remove';
-        removeBtn.className = 'remove-btn';
-        removeBtn.addEventListener('click', function() {
-            taskList.removeChild(li);
-            removeTaskFromLocalStorage(taskText);
-            updateTaskCounter();
-        });
-
-        // Append all elements
-        li.appendChild(checkbox);
-        li.appendChild(taskSpan);
-        li.appendChild(removeBtn);
-        taskList.appendChild(li);
-
-        if (save) {
-            saveTaskToLocalStorage(taskText, isCompleted);
-        }
-
-        taskInput.value = '';
-        updateTaskCounter();
+    if (taskText === '') {
+        alert('Please enter a task.');
+        return;
     }
+
+    // Create the <li> element
+    const li = document.createElement('li');
+    li.textContent = taskText;
+
+    // Create the remove <button>
+    const removeBtn = document.createElement('button');
+    removeBtn.textContent = 'Remove';
+    removeBtn.className = 'remove-btn';
+
+    // Assign the onclick event to remove the task
+    removeBtn.onclick = function () {
+        taskList.removeChild(li);
+    };
+
+    // Append the remove button to the li
+    li.appendChild(removeBtn);
+
+    // Append the li to the task list
+    taskList.appendChild(li);
+
+    // Clear the input field
+    taskInput.value = '';
+}
+
 
     // Check if task already exists
     function isTaskExists(taskText) {
